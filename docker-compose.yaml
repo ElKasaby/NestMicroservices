@@ -1,0 +1,147 @@
+# services:
+#   reservations:
+#     build:
+#       context: .
+#       dockerfile: ./apps/reservations/Dockerfile
+#       target: development
+#     command: npm run start:dev reservations
+#     env_file:
+#       - ./apps/reservations/.env
+#     ports:
+#       - '3000:3000'
+#     volumes:
+#       - .:/usr/src/app
+#     restart: 'always'
+
+#   auth:
+#     build:
+#       context: .
+#       dockerfile: ./apps/auth/Dockerfile
+#       target: development
+#     command: npm run start:dev auth
+#     env_file:
+#       - ./apps/auth/.env
+#     ports:
+#       - '3001:3001'
+#     volumes:
+#       - .:/usr/src/app
+#     restart: 'always'
+
+#   payments:
+#     build:
+#       context: .
+#       dockerfile: ./apps/payments/Dockerfile
+#       target: development
+#     command: npm run start:dev payments
+#     env_file:
+#       - ./apps/payments/.env
+#     ports:
+#       - '3003:3003'
+#       - '3004:3004'
+#     volumes:
+#       - .:/usr/src/app
+#     restart: 'always'
+
+#   mongo:
+#     image: mongo
+
+###############################################################################################
+version: '3.8'
+
+networks:
+  sleepr-network:
+    driver: bridge
+
+services:
+  reservations:
+    build:
+      context: .
+      dockerfile: ./apps/reservations/Dockerfile
+      target: development
+    command: npm run start:dev reservations
+    env_file:
+      - ./apps/reservations/.env
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/usr/src/app
+    networks:
+      - sleepr-network
+    depends_on:
+      - auth
+      - payments
+    restart: always
+
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: npm run start:dev auth
+    env_file:
+      - ./apps/auth/.env
+    ports:
+      - '3001:3001' # HTTP port
+      - '3002:3002' # TCP microservice port
+    volumes:
+      - .:/usr/src/app
+    networks:
+      - sleepr-network
+    # healthcheck:
+    #   test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 3
+    restart: always
+
+  payments:
+    build:
+      context: .
+      dockerfile: ./apps/payments/Dockerfile
+      target: development
+    command: npm run start:dev payments
+    env_file:
+      - ./apps/payments/.env
+    # ports:
+    #   - '3003:3003' # HTTP port
+    #   - '3004:3004' # TCP microservice port
+    volumes:
+      - .:/usr/src/app
+    networks:
+      - sleepr-network
+    # healthcheck:
+    #   test: ['CMD', 'curl', '-f', 'http://localhost:3003/health']
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 3
+    restart: always
+  
+  notifications:
+    build:
+      context: .
+      dockerfile: ./apps/notifications/Dockerfile
+      target: development
+    command: npm run start:dev notifications
+    env_file:
+      - ./apps/notifications/.env
+    # ports:
+    #   - ''
+    volumes:
+      - .:/usr/src/app
+    networks:
+      - sleepr-network
+    # depends_on:
+    #   - auth
+    #   - payments
+    restart: always
+
+  mongo:
+    image: mongo
+    networks:
+      - sleepr-network
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+volumes:
+  mongo_data:
