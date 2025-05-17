@@ -10,7 +10,7 @@ steps:
       - us-east4-docker.pkg.dev/sleepr-458611/reservations/production
       - -f
       - apps/reservations/Dockerfile
-      - apps/reservations
+      - .
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
@@ -24,7 +24,7 @@ steps:
       - us-east4-docker.pkg.dev/sleepr-458611/payments/production
       - -f
       - apps/payments/Dockerfile
-      - apps/payments
+      - .
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
