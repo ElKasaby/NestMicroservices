@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.auth.name }}
+  name: {{ .Values.auth.name }}
+spec:
+  replicas: {{ .Values.auth.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.auth.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.auth.name }}
+    spec:
+      containers:
+        - name: {{ .Values.auth.name }}
+          image: {{ .Values.auth.image }}
+          env:
+            - name: {{ .Values.auth.envName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.secretKeyName }}
+                  key: {{ .Values.auth.secretKey }}
+            - name: HTTP_PORT
+              value: "3002"
+            - name: JWT_EXPIRATION
+              value: "3600"
+            - name: TCP_PORT
+              value: "3003"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt
+                  key: jwtSecret
+          ports:
+            - containerPort: 3002
+            - containerPort: 3003

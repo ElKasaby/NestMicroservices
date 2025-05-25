@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.payments.name }}
+  name: {{ .Values.payments.name }}
+spec:
+  replicas: {{ .Values.payments.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.payments.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.payments.name }}
+    spec:
+      containers:
+        - image: {{ .Values.payments.image }}
+          name: {{ .Values.payments.name }}
+          env:
+            - name: {{ .Values.payments.envName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.payments.secretKeyName }}
+                  key: {{ .Values.payments.secretKey }}
+            - name: PORT
+              value: "3001"
+            - name: NOTIFICATIONS_HOST
+              value: notifications
+            - name : NOTIFICATIONS_PORT
+              value: "3000"
+            - name: TCP_PORT
+              value: "3004"
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe
+                  key: apiKey
+            - name: STRIPE_PUBLISHABLE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe
+                  key: publishKey
+          ports:
+          - containerPort: 3001
+          - containerPort: 3004

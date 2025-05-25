@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.notifications.name }}
+  name: {{ .Values.notifications.name }}
+spec:
+  replicas: {{ .Values.notifications.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.notifications.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.notifications.name }}
+    spec:
+      containers:
+        - image: {{ .Values.notifications.image }}
+          name: {{ .Values.notifications.name }}
+          env:
+            - name: {{ .Values.notifications.envName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.notifications.secretKeyName }}
+                  key: {{ .Values.notifications.secretKey }}
+            - name: PORT
+              value: '3000'
+            - name: GOOGLE_OAUTH_CLIENT_ID
+              value: 800106601446-cguq8qa0lrf8kvhd0om7inuev5bqgch0.apps.googleusercontent.com
+            - name: SMTP_USER
+              value: kasaby51@gmail.com
+            - name: GOOGLE_OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google
+                  key: clientSecret
+            - name: GOOGLE_OAUTH_REFRESH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: google
+                  key: refreshToken
+          ports:
+            - containerPort: 3000

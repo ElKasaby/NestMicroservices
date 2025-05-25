@@ -1,0 +1,37 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.reservations.name }}
+  labels:
+    app: {{ .Values.reservations.name }}
+spec:
+  replicas: {{  .Values.reservations.replicaCount  }}
+  selector:
+    matchLabels:
+      app: {{ .Values.reservations.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.reservations.name }}
+    spec:
+      containers:
+        - name: {{ .Values.reservations.name }}
+          image: {{ .Values.reservations.image }}
+          env:
+            - name: {{ .Values.reservations.envName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.reservations.secretKeyName }}
+                  key: {{ .Values.reservations.secretKey }}
+            - name: HTTP_PORT
+              value: "3005"
+            - name: AUTH_HOST
+              value: auth-tcp
+            - name: AUTH_PORT
+              value: "3003"
+            - name: PAYMENT_HOST
+              value: payments
+            - name: PAYMENT_PORT
+              value: "3004"
+          ports:
+            - containerPort: 3005

@@ -1,0 +1,29 @@
+﻿# values.yaml
+reservations:
+  image: us-east4-docker.pkg.dev/sleepr-458611/reservations/production
+  name: reservations
+  replicaCount: 1
+  envName: MONGODB_URI
+  secretKeyName: mongodb
+  secretKey: connectionString
+auth:
+  image: us-east4-docker.pkg.dev/sleepr-458611/auth/production
+  name: auth
+  replicaCount: 1
+  envName: MONGODB_URI
+  secretKeyName: mongodb
+  secretKey: connectionString
+payments:
+  image: us-east4-docker.pkg.dev/sleepr-458611/payments/production
+  name: payments
+  replicaCount: 1
+  envName: MONGODB_URI
+  secretKeyName: mongodb
+  secretKey: connectionString
+notifications:
+  image: us-east4-docker.pkg.dev/sleepr-458611/notifications/production
+  name: notifications
+  replicaCount: 1
+  envName: MONGODB_URI
+  secretKeyName: mongodb
+  secretKey: connectionString

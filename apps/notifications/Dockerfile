@@ -2,17 +2,23 @@ FROM node:alpine As development
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
-COPY tsconfig.json tsconfig.json
+# Copy everything for the whole repo
+COPY . .
 
+# Install root-level dependencies first
 RUN npm install
 
-COPY apps/notifications apps/notifications
-COPY libs libs
+# Now install dependencies inside apps/notifications specifically
+WORKDIR /usr/src/app/apps/notifications
+RUN npm install
 
-RUN cd apps/notifications && npm install
+# Back to root
+WORKDIR /usr/src/app
 
-RUN npm run build
+# Build only the notifications app
+RUN npx nest build notifications
+
+# -------------------
 
 FROM node:alpine As production
 
@@ -21,10 +27,20 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
+COPY package*.json ./
 
-RUN npm install --prod
+# Install production root dependencies
+RUN npm install --production
 
+# Install production dependencies for notifications app
+WORKDIR /usr/src/app/apps/notifications
+RUN npm install --production
+
+WORKDIR /usr/src/app
+
+# Copy built app and node_modules from development stage
 COPY --from=development /usr/src/app/dist ./dist
+COPY --from=development /usr/src/app/node_modules ./node_modules
+COPY --from=development /usr/src/app/apps/notifications/node_modules ./apps/notifications/node_modules
 
-CMD [ "node", "dist/apps/notifications/main" ]
+CMD [ "node", "dist/apps/notifications/main.js" ]
