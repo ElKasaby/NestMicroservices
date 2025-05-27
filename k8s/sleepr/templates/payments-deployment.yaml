@@ -44,3 +44,10 @@ spec:
           ports:
           - containerPort: 3001
           - containerPort: 3004
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
