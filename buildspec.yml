@@ -5,6 +5,9 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 512233056251.dkr.ecr.eu-north-1.amazonaws.com
+
+      - echo Logging in to Docker Hub...
+      - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
   build:
     commands:
       - docker build -t reservations -f apps/reservations/Dockerfile .
