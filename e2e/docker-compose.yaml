@@ -1,0 +1,70 @@
+networks:
+  sleepr-network:
+    driver: bridge
+
+services:
+  e2e:
+    build:
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./specs:/usr/src/app/specs
+    networks:
+      - sleepr-network
+    depends_on:
+      - reservations
+      - auth
+      - payments
+      - notifications
+      - mongo
+  reservations:
+    image: us-east4-docker.pkg.dev/sleepr-458611/reservations/production
+    env_file:
+      - ../apps/reservations/.env
+    ports:
+      - '3000:3000'
+    networks:
+      - sleepr-network
+    depends_on:
+      - auth
+      - payments
+    restart: always
+
+  auth:
+    image: us-east4-docker.pkg.dev/sleepr-458611/auth/production
+    env_file:
+      - ../apps/auth/.env
+    ports:
+      - '3001:3001' # HTTP port
+      - '3002:3002' # TCP microservice port
+    networks:
+      - sleepr-network
+    restart: always
+
+  payments:
+    image: us-east4-docker.pkg.dev/sleepr-458611/payments/production
+    env_file:
+      - ../apps/payments/.env
+    ports:
+      - '3003:3003'
+    networks:
+      - sleepr-network
+    restart: always
+
+  notifications:
+    image: us-east4-docker.pkg.dev/sleepr-458611/notifications/production
+    env_file:
+      - ../apps/notifications/.env
+    ports:
+      - '3004:3004'
+    networks:
+      - sleepr-network
+    restart: always
+
+  mongo:
+    image: mongo
+    networks:
+      - sleepr-network
+    restart: always
+
+volumes:
+  mongo_data:

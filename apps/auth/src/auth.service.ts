@@ -19,10 +19,17 @@ export class AuthService {
     expires.setSeconds(
       expires.getSeconds() + this.configService.get('JWT_EXPIRATION'),
     );
+
+    // Generate the JWT token
+    // The JWT token is signed with the secret key from the config service
     const token = this.jwtService.sign(tokenPayload);
+
+    // Set the cookie with the token
     response.cookie('Authentication', token, {
       httpOnly: true,
       expires,
     });
+
+    return token;
   }
 }
