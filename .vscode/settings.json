@@ -1,3 +1,6 @@
 {
-  "cSpell.words": ["Sleepr"]
+  "cSpell.words": ["Sleepr"],
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/dcermak/vscode-rke-cluster-config/main/schemas/cluster.yml.json": "file:///e%3A/MELkasaby/Learing%20Nestjs/Michael%20Guay%20Microservice/sleepr/cluster.yml"
+  }
 }

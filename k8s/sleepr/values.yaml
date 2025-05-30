@@ -1,27 +1,39 @@
 ﻿# values.yaml
 reservations:
-  image: us-east4-docker.pkg.dev/sleepr-458611/reservations/production
+  #for Google Cloud Build
+  # image: us-east4-docker.pkg.dev/sleepr-458611/reservations/production
+  # For AWS ECR
+  image: 512233056251.dkr.ecr.eu-north-1.amazonaws.com/reservations:latest
   name: reservations
   replicaCount: 1
   envName: MONGODB_URI
   secretKeyName: mongodb
   secretKey: connectionString
 auth:
-  image: us-east4-docker.pkg.dev/sleepr-458611/auth/production
+  #for Google Cloud Build
+  # image: us-east4-docker.pkg.dev/sleepr-458611/auth/production
+  # For AWS ECR
+  image: 512233056251.dkr.ecr.eu-north-1.amazonaws.com/auth:latest
   name: auth
   replicaCount: 1
   envName: MONGODB_URI
   secretKeyName: mongodb
   secretKey: connectionString
 payments:
-  image: us-east4-docker.pkg.dev/sleepr-458611/payments/production
+  #for Google Cloud Build
+  # image: us-east4-docker.pkg.dev/sleepr-458611/payments/production
+  # For AWS ECR
+  image: 512233056251.dkr.ecr.eu-north-1.amazonaws.com/payments:latest
   name: payments
   replicaCount: 1
   envName: MONGODB_URI
   secretKeyName: mongodb
   secretKey: connectionString
 notifications:
-  image: us-east4-docker.pkg.dev/sleepr-458611/notifications/production
+  #for Google Cloud Build
+  # image: us-east4-docker.pkg.dev/sleepr-458611/notifications/production
+  # For AWS ECR
+  image: 512233056251.dkr.ecr.eu-north-1.amazonaws.com/notifications:latest
   name: notifications
   replicaCount: 1
   envName: MONGODB_URI
