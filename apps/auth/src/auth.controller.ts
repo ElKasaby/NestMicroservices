@@ -19,6 +19,7 @@ export class AuthController {
     @Body() loginDto: LoginDto,
   ) {
     const jwt = await this.authService.login(user, response);
+    console.log('JWT Token:', jwt);
     // response.send(jwt);
     return jwt;
   }
