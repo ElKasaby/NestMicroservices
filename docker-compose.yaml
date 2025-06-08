@@ -46,7 +46,116 @@
 #     image: mongo
 
 ###############################################################################################
-version: '3.8'
+# MongoDB, Auth, Payments, Reservations, Notifications (MongoDB version)
+# Docker Compose configuration for Sleepr microservices
+###############################################################################################
+
+# version: '3.8'
+
+# networks:
+#   sleepr-network:
+#     driver: bridge
+
+# services:
+#   reservations:
+#     build:
+#       context: .
+#       dockerfile: ./apps/reservations/Dockerfile
+#       target: development
+#     command: npm run start:debug reservations
+#     env_file:
+#       - ./apps/reservations/.env
+#     ports:
+#       - '3000:3000'
+#       - '9229:9229'
+#     volumes:
+#       - .:/usr/src/app
+#     networks:
+#       - sleepr-network
+#     depends_on:
+#       - auth
+#       - payments
+#     restart: always
+
+#   auth:
+#     build:
+#       context: .
+#       dockerfile: ./apps/auth/Dockerfile
+#       target: development
+#     command: npm run start:dev auth
+#     env_file:
+#       - ./apps/auth/.env
+#     ports:
+#       - '3001:3001' # HTTP port
+#       - '3002:3002' # TCP microservice port
+#       # - '9229:9229'
+#     volumes:
+#       - .:/usr/src/app
+#     networks:
+#       - sleepr-network
+#     # healthcheck:
+#     #   test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
+#     #   interval: 10s
+#     #   timeout: 5s
+#     #   retries: 3
+#     restart: always
+
+#   payments:
+#     build:
+#       context: .
+#       dockerfile: ./apps/payments/Dockerfile
+#       target: development
+#     command: npm run start:dev payments
+#     env_file:
+#       - ./apps/payments/.env
+#     # ports:
+#     #   - '3003:3003' # HTTP port
+#     #   - '3004:3004' # TCP microservice port
+#     volumes:
+#       - .:/usr/src/app
+#     networks:
+#       - sleepr-network
+#     # healthcheck:
+#     #   test: ['CMD', 'curl', '-f', 'http://localhost:3003/health']
+#     #   interval: 10s
+#     #   timeout: 5s
+#     #   retries: 3
+#     restart: always
+
+#   notifications:
+#     build:
+#       context: .
+#       dockerfile: ./apps/notifications/Dockerfile
+#       target: development
+#     command: npm run start:dev notifications
+#     env_file:
+#       - ./apps/notifications/.env
+#     # ports:
+#     #   - ''
+#     volumes:
+#       - .:/usr/src/app
+#     networks:
+#       - sleepr-network
+#     # depends_on:
+#     #   - auth
+#     #   - payments
+#     restart: always
+
+#   mongo:
+#     image: mongo
+#     networks:
+#       - sleepr-network
+#     volumes:
+#       - mongo_data:/data/db
+#     restart: always
+
+# volumes:
+#   mongo_data:
+
+######################################3########################################
+# Docker Compose configuration for Sleepr microservices (SQL version)
+# This configuration sets up the Sleepr application with MySQL, Auth, Payments, Reservations, and Notifications services.
+############################################3###############################
 
 networks:
   sleepr-network:
@@ -58,7 +167,7 @@ services:
       context: .
       dockerfile: ./apps/reservations/Dockerfile
       target: development
-    command: npm run start:debug reservations
+    command: npm run start:dev reservations
     env_file:
       - ./apps/reservations/.env
     ports:
@@ -84,16 +193,10 @@ services:
     ports:
       - '3001:3001' # HTTP port
       - '3002:3002' # TCP microservice port
-      # - '9229:9229'
     volumes:
       - .:/usr/src/app
     networks:
       - sleepr-network
-    # healthcheck:
-    #   test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 3
     restart: always
 
   payments:
@@ -104,18 +207,10 @@ services:
     command: npm run start:dev payments
     env_file:
       - ./apps/payments/.env
-    # ports:
-    #   - '3003:3003' # HTTP port
-    #   - '3004:3004' # TCP microservice port
     volumes:
       - .:/usr/src/app
     networks:
       - sleepr-network
-    # healthcheck:
-    #   test: ['CMD', 'curl', '-f', 'http://localhost:3003/health']
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 3
     restart: always
 
   notifications:
@@ -126,24 +221,23 @@ services:
     command: npm run start:dev notifications
     env_file:
       - ./apps/notifications/.env
-    # ports:
-    #   - ''
     volumes:
       - .:/usr/src/app
     networks:
       - sleepr-network
-    # depends_on:
-    #   - auth
-    #   - payments
     restart: always
 
-  mongo:
-    image: mongo
+  mysql:
+    image: mysql
+    env_file:
+      - .env
+    ports:
+      - '3306:3306'
     networks:
       - sleepr-network
     volumes:
-      - mongo_data:/data/db
+      - mysql_data:/var/lib/mysql
     restart: always
 
 volumes:
-  mongo_data:
+  mysql_data:
